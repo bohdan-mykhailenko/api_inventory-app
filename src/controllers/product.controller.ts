@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { productService } from '../services/product.service';
 import { sendInternalServerErrorResponse } from '../errors/internalServerError';
+import { sendInvalidIdResponse } from '../errors/invalidId';
 
 class ProductController {
   async getAllProducts(req: Request, res: Response) {
@@ -14,12 +15,14 @@ class ProductController {
   }
 
   async getProductsForOrder(req: Request, res: Response) {
-    const { orderId } = req.params;
+    const orderId = parseInt(req.params.orderId, 10);
+
+    if (isNaN(orderId)) {
+      sendInvalidIdResponse(res, 'order');
+    }
 
     try {
-      const products = await productService.getProductsForOrder(
-        parseInt(orderId, 10),
-      );
+      const products = await productService.getProductsForOrder(orderId);
 
       return res.status(200).json(products);
     } catch (error) {
@@ -40,10 +43,14 @@ class ProductController {
   }
 
   async deleteProduct(req: Request, res: Response) {
-    const { productId } = req.params;
+    const productId = parseInt(req.params.productId, 10);
+
+    if (isNaN(productId)) {
+      sendInvalidIdResponse(res, 'product');
+    }
 
     try {
-      await productService.deleteProduct(parseInt(productId, 10));
+      await productService.deleteProduct(productId);
 
       return res.status(204).send();
     } catch (error) {
@@ -52,4 +59,4 @@ class ProductController {
   }
 }
 
-export default new ProductController();
+export const productController = Object.freeze(new ProductController());

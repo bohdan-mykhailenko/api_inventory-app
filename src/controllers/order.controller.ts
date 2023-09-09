@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
 import { sendInternalServerErrorResponse } from '../errors/internalServerError';
+import { sendInvalidIdResponse } from '../errors/invalidId';
 
 class OrderController {
   async getAllOrders(req: Request, res: Response) {
@@ -26,10 +27,14 @@ class OrderController {
   }
 
   async deleteOrder(req: Request, res: Response) {
-    const { id } = req.params;
+    const orderId = parseInt(req.params.orderId, 10);
+
+    if (isNaN(orderId)) {
+      sendInvalidIdResponse(res, 'order');
+    }
 
     try {
-      await orderService.deleteOrder(Number(id));
+      await orderService.deleteOrder(orderId);
 
       return res.status(204).send();
     } catch (error) {
@@ -38,4 +43,4 @@ class OrderController {
   }
 }
 
-export default new OrderController();
+export const orderController = Object.freeze(new OrderController());

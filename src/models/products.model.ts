@@ -72,7 +72,6 @@ export class Product extends Model {
 
   @Column({
     type: DataType.JSONB,
-    allowNull: false,
   })
   price!: {
     value: number;

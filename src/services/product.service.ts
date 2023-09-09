@@ -7,6 +7,7 @@ class ProductService {
 
       return products;
     } catch (error) {
+      console.log(error);
       throw new Error('Error fetching all products');
     }
   }
