@@ -1,4 +1,4 @@
-import Order from '../models/orders.model';
+import { Order } from '../models/orders.model';
 import { OrderData } from '../types/Order';
 
 class OrderService {

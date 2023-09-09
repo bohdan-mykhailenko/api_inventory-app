@@ -5,7 +5,7 @@ import { DataType, Model, Table, Column } from 'sequelize-typescript';
   tableName: 'orders',
   timestamps: true,
 })
-class Order extends Model {
+export class Order extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -30,5 +30,3 @@ class Order extends Model {
   })
   description!: string;
 }
-
-export default Order;
