@@ -72,4 +72,3 @@ module.exports = {
     await queryInterface.bulkDelete('orders', null, {});
   },
 };
-
