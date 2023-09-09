@@ -15,6 +15,7 @@ initDB();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 app.use('/orders', OrderRoutes);
 app.use('/products', ProductRoutes);
