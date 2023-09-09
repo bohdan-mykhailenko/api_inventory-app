@@ -19,19 +19,10 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
       },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
     });
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('orders');
   },
 };
