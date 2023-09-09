@@ -21,4 +21,4 @@ class OrderService {
   }
 }
 
-export default new OrderService();
+export const orderService = Object.freeze(new OrderService());

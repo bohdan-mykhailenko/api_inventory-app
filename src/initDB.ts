@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
 import { Order } from './models/orders.model';
-//import { Product } from './models/products.model';
+import { Product } from './models/products.model';
 import { db } from './db';
 
 // dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
@@ -18,7 +18,7 @@ export const initDB = () => {
   }
 
   const sequelize = new Sequelize(URI, {
-    models: [Order],
+    models: [Order, Product],
     dialectOptions: {
       ssl: true,
     },

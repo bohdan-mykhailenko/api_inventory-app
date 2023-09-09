@@ -1,36 +1,46 @@
 import { Request, Response } from 'express';
-import OrderService from '../services/order.service';
+import { orderService } from '../services/order.service';
+import { sendInternalServerErrorResponse } from '../errors/internalServerError';
+import { sendInvalidIdResponse } from '../errors/invalidId';
 
 class OrderController {
   async getAllOrders(req: Request, res: Response) {
     try {
-      const orders = await OrderService.getAllOrders();
+      const orders = await orderService.getAllOrders();
 
       return res.status(200).json(orders);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error' });
+      sendInternalServerErrorResponse(res);
     }
   }
 
   async createOrder(req: Request, res: Response) {
     const orderData = req.body;
+
     try {
-      const newOrder = await OrderService.createOrder(orderData);
+      const newOrder = await orderService.createOrder(orderData);
+
       return res.status(201).json(newOrder);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error' });
+      sendInternalServerErrorResponse(res);
     }
   }
 
   async deleteOrder(req: Request, res: Response) {
-    const { id } = req.params;
+    const orderId = parseInt(req.params.orderId, 10);
+
+    if (isNaN(orderId)) {
+      sendInvalidIdResponse(res, 'order');
+    }
+
     try {
-      await OrderService.deleteOrder(Number(id));
+      await orderService.deleteOrder(orderId);
+
       return res.status(204).send();
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error' });
+      sendInternalServerErrorResponse(res);
     }
   }
 }
 
-export default new OrderController();
+export const orderController = Object.freeze(new OrderController());
