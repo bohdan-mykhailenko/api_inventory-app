@@ -9,7 +9,7 @@ module.exports = {
         autoIncrement: true,
       },
       serialNumber: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       isNew: {
@@ -22,6 +22,7 @@ module.exports = {
       },
       photo: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       title: {
         type: Sequelize.STRING,
@@ -33,14 +34,12 @@ module.exports = {
       },
       specification: {
         type: Sequelize.TEXT,
-        allowNull: false,
       },
       guarantee: {
         type: Sequelize.JSONB,
       },
       price: {
         type: Sequelize.JSONB,
-        allowNull: false,
       },
       order_id: {
         type: Sequelize.INTEGER,

@@ -12,7 +12,11 @@
     "prepare": "husky install",
     "build": "tsc",
     "pre-build": "npm install && npm run build",
-    "start": "node build/server.js"
+    "start": "node build/server.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all",
+    "drop-products": "npx sequelize-cli db:migrate:undo --name 20230909154015-create-products.js",
+    "drop-orders": "npx sequelize-cli db:migrate:undo --name 20230909110924-create-orders.js"
   },
   "repository": {
     "type": "git",
@@ -27,17 +31,23 @@
   "homepage": "https://github.com/fe-apr23-418-teapot-crew/online_store_back-end#readme",
   "dependencies": {
     "@types/socket.io": "^3.0.2",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
     "pg": "^8.11.3",
     "sequelize": "^6.33.0",
     "sequelize-typescript": "^2.1.5",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
+    "@types/multer": "^1.4.7",
     "@types/node": "^20.4.5",
     "@types/sequelize": "^4.28.15",
+    "@types/uuid": "^9.0.3",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
     "eslint": "^8.45.0",

@@ -1,23 +1,42 @@
+import { dbResponse } from '../errors/dbResponse';
 import { Order } from '../models/orders.model';
-import { OrderData } from '../types/Order';
 
 class OrderService {
   async getAllOrders() {
-    return Order.findAll();
+    try {
+      const orders = await Order.findAll();
+
+      return orders;
+    } catch (error) {
+      dbResponse.errorGetAll('orders');
+    }
   }
 
-  async createOrder(orderData: OrderData) {
-    const orderAttributes = {
-      title: orderData.title,
-      date: orderData.date,
-      description: orderData.description,
-    };
+  async createOrder(orderData: Partial<Order>) {
+    try {
+      const order = await Order.create({
+        ...orderData,
+      });
 
-    return Order.create(orderAttributes);
+      return order;
+    } catch (error) {
+      dbResponse.errorCreate('order');
+    }
   }
 
   async deleteOrder(orderId: number) {
-    return Order.destroy({ where: { id: orderId } });
+    try {
+      const order = await Order.findByPk(orderId);
+
+      if (!order) {
+        dbResponse.errorFindByPK('order', orderId);
+        throw new Error('with ID  not found');
+      }
+
+      await order.destroy();
+    } catch (error) {
+      dbResponse.errorDelete('order', orderId);
+    }
   }
 }
 

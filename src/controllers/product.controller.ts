@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { productService } from '../services/product.service';
 import { sendInternalServerErrorResponse } from '../errors/internalServerError';
 import { sendInvalidIdResponse } from '../errors/invalidId';
+import { validationResult } from 'express-validator';
 
 class ProductController {
   async getAllProducts(req: Request, res: Response) {
@@ -32,12 +33,33 @@ class ProductController {
 
   async addProduct(req: Request, res: Response) {
     const productData = req.body;
+    const productImage = req.file as Express.Multer.File;
+
+    console.log(productImage);
+
+    const errors = validationResult(req);
+
+    if (!req.file || !req.body) {
+      return res
+        .status(400)
+        .json({ error: 'Both image and JSON data are required.' });
+    }
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     try {
-      const product = await productService.addProduct(productData);
+      const product = await productService.addProduct(
+        productData,
+        productImage,
+      );
+
+      console.log(product);
 
       return res.status(201).json(product);
     } catch (error) {
+      console.log(error);
       sendInternalServerErrorResponse(res);
     }
   }
