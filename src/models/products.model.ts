@@ -22,10 +22,10 @@ export class Product extends Model {
   id!: number;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: false,
   })
-  serialNumber!: number;
+  serialNumber!: string;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -41,6 +41,7 @@ export class Product extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
   })
   photo!: string;
 
@@ -58,7 +59,6 @@ export class Product extends Model {
 
   @Column({
     type: DataType.TEXT,
-    allowNull: false,
   })
   specification!: string;
 

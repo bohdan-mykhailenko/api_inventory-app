@@ -1,4 +1,7 @@
 import { Product } from '../models/products.model';
+import fs from 'fs';
+import path from 'path';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 
 class ProductService {
   async getAllProducts() {
@@ -7,8 +10,7 @@ class ProductService {
 
       return products;
     } catch (error) {
-      console.log(error);
-      throw new Error('Error fetching all products');
+      throw new DatabaseOperationError('Error fetching all products');
     }
   }
 
@@ -18,17 +20,25 @@ class ProductService {
 
       return products;
     } catch (error) {
-      throw new Error(`Error fetching products for order ${orderId}`);
+      throw new DatabaseOperationError(
+        `Error fetching products for order ${orderId}`,
+      );
     }
   }
 
-  async addProduct(productData: Partial<Product>) {
+  async addProduct(
+    productData: Partial<Product>,
+    productImage: Express.Multer.File,
+  ) {
     try {
-      const product = await Product.create(productData);
+      const product = await Product.create({
+        ...productData,
+        photo: productImage.filename,
+      });
 
       return product;
     } catch (error) {
-      throw new Error('Error adding a new product');
+      throw new DatabaseOperationError('Error adding a new product with image');
     }
   }
 
@@ -37,12 +47,29 @@ class ProductService {
       const product = await Product.findByPk(productId);
 
       if (!product) {
-        throw new Error(`Product with ID ${productId} not found`);
+        throw new NotFoundError(`Product with ID ${productId} not found`);
+      }
+
+      const imagePath = product.photo;
+
+      if (imagePath) {
+        const fullPath = path.join(
+          __dirname,
+          '..',
+          '..',
+          'public',
+          'images',
+          imagePath,
+        );
+
+        fs.unlinkSync(fullPath);
       }
 
       await product.destroy();
     } catch (error) {
-      throw new Error(`Error deleting product with ID ${productId}`);
+      throw new DatabaseOperationError(
+        `Error deleting product with ID ${productId}`,
+      );
     }
   }
 }

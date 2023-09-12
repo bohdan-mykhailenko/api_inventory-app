@@ -1,23 +1,43 @@
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 import { Order } from '../models/orders.model';
-import { OrderData } from '../types/Order';
 
 class OrderService {
   async getAllOrders() {
-    return Order.findAll();
+    try {
+      const orders = await Order.findAll();
+
+      return orders;
+    } catch (error) {
+      throw new DatabaseOperationError('Error while fetching orders');
+    }
   }
 
-  async createOrder(orderData: OrderData) {
-    const orderAttributes = {
-      title: orderData.title,
-      date: orderData.date,
-      description: orderData.description,
-    };
+  async createOrder(orderData: Partial<Order>) {
+    try {
+      const order = await Order.create({
+        ...orderData,
+      });
 
-    return Order.create(orderAttributes);
+      return order;
+    } catch (error) {
+      throw new DatabaseOperationError('Error while creating an order');
+    }
   }
 
   async deleteOrder(orderId: number) {
-    return Order.destroy({ where: { id: orderId } });
+    try {
+      const order = await Order.findByPk(orderId);
+
+      if (!order) {
+        throw new NotFoundError(`Order with ID ${orderId} not found`);
+      }
+
+      await order.destroy();
+    } catch (error) {
+      throw new DatabaseOperationError(
+        `Error while deleting order with ID ${orderId}`,
+      );
+    }
   }
 }
 

@@ -1,16 +1,27 @@
 import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
-import { sendInternalServerErrorResponse } from '../errors/internalServerError';
-import { sendInvalidIdResponse } from '../errors/invalidId';
+import {
+  sendInternalServerErrorResponse,
+  sendNotFoundResponse,
+  sendBadRequestResponse,
+} from '../utils/sendErrorResponces';
+import { DatabaseOperationError } from '../errors/APIErrors';
+import { isValidId } from '../helpers/isValidId';
 
 class OrderController {
   async getAllOrders(req: Request, res: Response) {
     try {
       const orders = await orderService.getAllOrders();
 
+      if (!orders.length) {
+        return sendNotFoundResponse(res, 'Orders not found');
+      }
+
       return res.status(200).json(orders);
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 
@@ -22,15 +33,17 @@ class OrderController {
 
       return res.status(201).json(newOrder);
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 
   async deleteOrder(req: Request, res: Response) {
     const orderId = parseInt(req.params.orderId, 10);
 
-    if (isNaN(orderId)) {
-      sendInvalidIdResponse(res, 'order');
+    if (!isValidId(orderId)) {
+      return sendBadRequestResponse(res, 'Invalid order ID type');
     }
 
     try {
@@ -38,7 +51,9 @@ class OrderController {
 
       return res.status(204).send();
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 }
