@@ -1,33 +1,52 @@
 import { Request, Response } from 'express';
 import { productService } from '../services/product.service';
-import { sendInternalServerErrorResponse } from '../errors/internalServerError';
-import { sendInvalidIdResponse } from '../errors/invalidId';
-import { validationResult } from 'express-validator';
+import {
+  sendInternalServerErrorResponse,
+  sendBadRequestResponse,
+} from '../utils/sendErrorResponces';
+import { DatabaseOperationError } from '../errors/APIErrors';
+import { sendNotFoundResponse } from '../utils/sendErrorResponces';
+import { isValidId } from '../helpers/isValidId';
 
 class ProductController {
   async getAllProducts(req: Request, res: Response) {
     try {
       const products = await productService.getAllProducts();
 
+      if (!products.length) {
+        return sendNotFoundResponse(res, 'Products not found');
+      }
+
       return res.status(200).json(products);
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 
   async getProductsForOrder(req: Request, res: Response) {
     const orderId = parseInt(req.params.orderId, 10);
 
-    if (isNaN(orderId)) {
-      sendInvalidIdResponse(res, 'order');
+    if (!isValidId(orderId)) {
+      return sendBadRequestResponse(res, 'Invalid order ID type');
     }
 
     try {
       const products = await productService.getProductsForOrder(orderId);
 
+      if (!products.length) {
+        return sendNotFoundResponse(
+          res,
+          `Products for order ${orderId} not found`,
+        );
+      }
+
       return res.status(200).json(products);
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 
@@ -35,18 +54,11 @@ class ProductController {
     const productData = req.body;
     const productImage = req.file as Express.Multer.File;
 
-    console.log(productImage);
-
-    const errors = validationResult(req);
-
     if (!req.file || !req.body) {
-      return res
-        .status(400)
-        .json({ error: 'Both image and JSON data are required.' });
-    }
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return sendBadRequestResponse(
+        res,
+        'Both image and JSON data are required.',
+      );
     }
 
     try {
@@ -55,20 +67,19 @@ class ProductController {
         productImage,
       );
 
-      console.log(product);
-
       return res.status(201).json(product);
     } catch (error) {
-      console.log(error);
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 
   async deleteProduct(req: Request, res: Response) {
     const productId = parseInt(req.params.productId, 10);
 
-    if (isNaN(productId)) {
-      sendInvalidIdResponse(res, 'product');
+    if (!isValidId(productId)) {
+      return sendBadRequestResponse(res, 'Invalid product ID type');
     }
 
     try {
@@ -76,7 +87,9 @@ class ProductController {
 
       return res.status(204).send();
     } catch (error) {
-      sendInternalServerErrorResponse(res);
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
     }
   }
 }

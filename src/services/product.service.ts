@@ -1,6 +1,7 @@
 import { Product } from '../models/products.model';
 import fs from 'fs';
 import path from 'path';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 
 class ProductService {
   async getAllProducts() {
@@ -9,7 +10,7 @@ class ProductService {
 
       return products;
     } catch (error) {
-      throw new Error('Error fetching all products');
+      throw new DatabaseOperationError('Error fetching all products');
     }
   }
 
@@ -19,7 +20,9 @@ class ProductService {
 
       return products;
     } catch (error) {
-      throw new Error(`Error fetching products for order ${orderId}`);
+      throw new DatabaseOperationError(
+        `Error fetching products for order ${orderId}`,
+      );
     }
   }
 
@@ -35,7 +38,7 @@ class ProductService {
 
       return product;
     } catch (error) {
-      throw new Error('Error adding a new product with image');
+      throw new DatabaseOperationError('Error adding a new product with image');
     }
   }
 
@@ -44,7 +47,7 @@ class ProductService {
       const product = await Product.findByPk(productId);
 
       if (!product) {
-        throw new Error(`Product with ID ${productId} not found`);
+        throw new NotFoundError(`Product with ID ${productId} not found`);
       }
 
       const imagePath = product.photo;
@@ -64,8 +67,9 @@ class ProductService {
 
       await product.destroy();
     } catch (error) {
-      console.log(error);
-      throw new Error(`Error deleting product with ID ${productId}`);
+      throw new DatabaseOperationError(
+        `Error deleting product with ID ${productId}`,
+      );
     }
   }
 }

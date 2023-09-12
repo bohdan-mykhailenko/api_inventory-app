@@ -1,4 +1,4 @@
-import { dbResponse } from '../errors/dbResponse';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 import { Order } from '../models/orders.model';
 
 class OrderService {
@@ -8,7 +8,7 @@ class OrderService {
 
       return orders;
     } catch (error) {
-      dbResponse.errorGetAll('orders');
+      throw new DatabaseOperationError('Error while fetching orders');
     }
   }
 
@@ -20,7 +20,7 @@ class OrderService {
 
       return order;
     } catch (error) {
-      dbResponse.errorCreate('order');
+      throw new DatabaseOperationError('Error while creating an order');
     }
   }
 
@@ -29,13 +29,14 @@ class OrderService {
       const order = await Order.findByPk(orderId);
 
       if (!order) {
-        dbResponse.errorFindByPK('order', orderId);
-        throw new Error('with ID  not found');
+        throw new NotFoundError(`Order with ID ${orderId} not found`);
       }
 
       await order.destroy();
     } catch (error) {
-      dbResponse.errorDelete('order', orderId);
+      throw new DatabaseOperationError(
+        `Error while deleting order with ID ${orderId}`,
+      );
     }
   }
 }
