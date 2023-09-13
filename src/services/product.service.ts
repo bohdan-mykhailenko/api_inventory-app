@@ -42,6 +42,20 @@ class ProductService {
     }
   }
 
+  async getProductCountForOrder(orderId: number) {
+    try {
+      const productCount = await Product.count({
+        where: { order_id: orderId },
+      });
+
+      return productCount;
+    } catch (error) {
+      throw new DatabaseOperationError(
+        `Error fetching product count for order ${orderId}`,
+      );
+    }
+  }
+
   async addProduct(
     productData: Partial<Product>,
     productImage: Express.Multer.File,

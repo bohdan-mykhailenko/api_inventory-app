@@ -6,8 +6,8 @@ export const router = express.Router();
 
 router.get('/:productId', productController.getProductById);
 router.get('/', productController.getAllProducts);
-
 router.get('/order/:orderId', productController.getProductsForOrder);
+router.get('/order/:orderId/count', productController.getProductsCountForOrder);
 
 router.post('/', fileUploadMiddleware, productController.addProduct);
 
