@@ -28,16 +28,16 @@ class ProductService {
     }
   }
 
-  async getProductsForProduct(productId: number) {
+  async getProductsForOrder(orderId: number) {
     try {
       const products = await Product.findAll({
-        where: { product_id: productId },
+        where: { order_id: orderId },
       });
 
       return products;
     } catch (error) {
       throw new DatabaseOperationError(
-        `Error fetching products for product ${productId}`,
+        `Error fetching products for product ${orderId}`,
       );
     }
   }
