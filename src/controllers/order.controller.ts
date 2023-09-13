@@ -9,6 +9,24 @@ import { DatabaseOperationError } from '../errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class OrderController {
+  async getOrderById(req: Request, res: Response) {
+    const orderId = parseInt(req.params.orderId, 10);
+
+    if (!isValidId(orderId)) {
+      return sendBadRequestResponse(res, 'Invalid order ID type');
+    }
+
+    try {
+      const order = await orderService.getOrderById(orderId);
+
+      return res.status(200).send(order);
+    } catch (error) {
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
+    }
+  }
+
   async getAllOrders(req: Request, res: Response) {
     try {
       const orders = await orderService.getAllOrders();

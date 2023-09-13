@@ -4,6 +4,20 @@ import path from 'path';
 import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 
 class ProductService {
+  async getProductById(productId: number) {
+    try {
+      const product = await Product.findByPk(productId);
+
+      if (!product) {
+        throw new NotFoundError(`Product with ID ${productId} not found`);
+      }
+
+      return product;
+    } catch (error) {
+      throw new DatabaseOperationError('Error while fetching product');
+    }
+  }
+
   async getAllProducts() {
     try {
       const products = await Product.findAll();
@@ -14,14 +28,16 @@ class ProductService {
     }
   }
 
-  async getProductsForOrder(orderId: number) {
+  async getProductsForProduct(productId: number) {
     try {
-      const products = await Product.findAll({ where: { order_id: orderId } });
+      const products = await Product.findAll({
+        where: { product_id: productId },
+      });
 
       return products;
     } catch (error) {
       throw new DatabaseOperationError(
-        `Error fetching products for order ${orderId}`,
+        `Error fetching products for product ${productId}`,
       );
     }
   }

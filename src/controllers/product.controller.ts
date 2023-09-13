@@ -9,6 +9,24 @@ import { sendNotFoundResponse } from '../utils/sendErrorResponces';
 import { isValidId } from '../helpers/isValidId';
 
 class ProductController {
+  async getProductById(req: Request, res: Response) {
+    const productId = parseInt(req.params.productId, 10);
+
+    if (!isValidId(productId)) {
+      return sendBadRequestResponse(res, 'Invalid product ID type');
+    }
+
+    try {
+      const product = await productService.getProductById(productId);
+
+      return res.status(200).send(product);
+    } catch (error) {
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
+    }
+  }
+
   async getAllProducts(req: Request, res: Response) {
     try {
       const products = await productService.getAllProducts();
@@ -25,20 +43,20 @@ class ProductController {
     }
   }
 
-  async getProductsForOrder(req: Request, res: Response) {
-    const orderId = parseInt(req.params.orderId, 10);
+  async getProductsForProduct(req: Request, res: Response) {
+    const productId = parseInt(req.params.productId, 10);
 
-    if (!isValidId(orderId)) {
-      return sendBadRequestResponse(res, 'Invalid order ID type');
+    if (!isValidId(productId)) {
+      return sendBadRequestResponse(res, 'Invalid product ID type');
     }
 
     try {
-      const products = await productService.getProductsForOrder(orderId);
+      const products = await productService.getProductsForProduct(productId);
 
       if (!products.length) {
         return sendNotFoundResponse(
           res,
-          `Products for order ${orderId} not found`,
+          `Products for product ${productId} not found`,
         );
       }
 
