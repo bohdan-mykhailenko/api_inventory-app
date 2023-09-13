@@ -28,6 +28,7 @@ class OrderService {
         attributes: [
           'id',
           'title',
+          'date',
           'description',
           [Sequelize.fn('COUNT', Sequelize.col('products.id')), 'productCount'],
           [
