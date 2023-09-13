@@ -5,9 +5,8 @@ import { fileUploadMiddleware } from '../middlewares/fileUploadMiddleware';
 export const router = express.Router();
 
 router.get('/:productId', productController.getProductById);
-router.get('/', productController.getAllProducts);
+router.get('/', productController.getProductsByType);
 router.get('/order/:orderId', productController.getProductsForOrder);
-router.get('/order/:orderId/count', productController.getProductsCountForOrder);
 
 router.post('/', fileUploadMiddleware, productController.addProduct);
 

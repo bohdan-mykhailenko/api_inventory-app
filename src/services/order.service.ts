@@ -1,5 +1,11 @@
-import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
+import { Sequelize } from 'sequelize';
+import {
+  DatabaseOperationError,
+  NotFoundError,
+} from '../controllers/errors/APIErrors';
 import { Order } from '../models/orders.model';
+import { OrderDetails } from '../types/OrderDetails';
+import { Product } from '../models/products.model';
 
 class OrderService {
   async getOrderById(orderId: number) {
@@ -18,11 +24,66 @@ class OrderService {
 
   async getAllOrders() {
     try {
-      const orders = await Order.findAll();
+      const orderDetails = await Order.findAll({
+        attributes: [
+          'id',
+          'title',
+          'description',
+          [Sequelize.fn('COUNT', Sequelize.col('products.id')), 'productCount'],
+          [
+            Sequelize.fn(
+              'SUM',
+              Sequelize.literal(
+                'CASE WHEN "products"."price"->0->>\'symbol\' = \'USD\' THEN CAST("products"."price"->0->>\'value\' AS DECIMAL) ELSE 0 END',
+              ),
+            ),
+            'usdTotalPrice',
+          ],
+          [
+            Sequelize.fn(
+              'SUM',
+              Sequelize.literal(
+                'CASE WHEN "products"."price"->1->>\'symbol\' = \'UAH\' THEN CAST("products"."price"->1->>\'value\' AS DECIMAL) ELSE 0 END',
+              ),
+            ),
+            'uahTotalPrice',
+          ],
+        ],
+        include: [
+          {
+            model: Product,
+            as: 'products',
+            attributes: [],
+            required: false,
+          },
+        ],
+        group: ['Order.id'],
+        order: [['id', 'ASC']],
+      });
 
-      return orders;
+      const formattedOrderDetails: OrderDetails[] = orderDetails.map(
+        (order) => ({
+          id: order.id,
+          title: order.title,
+          description: order.description,
+          productCount: order.getDataValue('productCount'),
+          sumOfPrice: [
+            {
+              value: parseFloat(order.getDataValue('usdTotalPrice')),
+              symbol: 'USD',
+            },
+            {
+              value: parseFloat(order.getDataValue('uahTotalPrice')),
+              symbol: 'UAH',
+            },
+          ],
+        }),
+      );
+
+      return formattedOrderDetails;
     } catch (error) {
-      throw new DatabaseOperationError('Error while fetching orders');
+      console.error(error);
+      throw new DatabaseOperationError('Error fetching order details');
     }
   }
 

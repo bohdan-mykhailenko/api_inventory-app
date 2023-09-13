@@ -1,5 +1,6 @@
 /* eslint-disable indent */
-import { DataType, Model, Table, Column } from 'sequelize-typescript';
+import { DataType, Model, Table, Column, HasMany } from 'sequelize-typescript';
+import { Product } from './products.model';
 
 @Table({
   tableName: 'orders',
@@ -29,4 +30,7 @@ export class Order extends Model {
     type: DataType.TEXT,
   })
   description!: string;
+
+  @HasMany(() => Product, 'order_id')
+  products!: Product[];
 }

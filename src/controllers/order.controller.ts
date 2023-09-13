@@ -5,12 +5,15 @@ import {
   sendNotFoundResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from '../errors/APIErrors';
+import { DatabaseOperationError } from './errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class OrderController {
   async getOrderById(req: Request, res: Response) {
     const orderId = parseInt(req.params.orderId, 10);
+    const queryParam = req.params.orderId;
+
+    console.log(queryParam);
 
     if (!isValidId(orderId)) {
       return sendBadRequestResponse(res, 'Invalid order ID type');
