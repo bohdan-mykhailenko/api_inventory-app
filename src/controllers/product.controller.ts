@@ -43,20 +43,20 @@ class ProductController {
     }
   }
 
-  async getProductsForProduct(req: Request, res: Response) {
-    const productId = parseInt(req.params.productId, 10);
+  async getProductsForOrder(req: Request, res: Response) {
+    const orderId = parseInt(req.params.orderId, 10);
 
-    if (!isValidId(productId)) {
-      return sendBadRequestResponse(res, 'Invalid product ID type');
+    if (!isValidId(orderId)) {
+      return sendBadRequestResponse(res, 'Invalid order ID type');
     }
 
     try {
-      const products = await productService.getProductsForProduct(productId);
+      const products = await productService.getProductsForOrder(orderId);
 
       if (!products.length) {
         return sendNotFoundResponse(
           res,
-          `Products for product ${productId} not found`,
+          `Products for product ${orderId} not found`,
         );
       }
 
