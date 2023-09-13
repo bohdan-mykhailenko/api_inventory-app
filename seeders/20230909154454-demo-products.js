@@ -9,7 +9,7 @@ module.exports = {
         isRepairing: false,
         photo: 'phone.jpg',
         title: 'Sample Product 1',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Sample Specification',
         guarantee: JSON.stringify({
           start: '2007-06-29 12:09:33',
@@ -28,7 +28,7 @@ module.exports = {
         isRepairing: true,
         photo: 'monitor.jpg',
         title: 'Sample Product 2',
-        type: 'Monitors',
+        type: 'monitors',
         specification: 'Another Sample Specification',
         guarantee: JSON.stringify({
           start: '2007-06-29 12:09:33',
@@ -47,7 +47,7 @@ module.exports = {
         isRepairing: false,
         photo: 'monitor.jpg',
         title: 'Product 7651',
-        type: 'Monitors',
+        type: 'monitors',
         specification: 'Specification 1',
         guarantee: JSON.stringify({
           start: '2017-06-29 12:09:33',
@@ -66,7 +66,7 @@ module.exports = {
         isRepairing: true,
         photo: 'phone.jpg',
         title: 'Product 221',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 2',
         guarantee: JSON.stringify({
           start: '2018-07-01 10:00:00',
@@ -85,7 +85,7 @@ module.exports = {
         isRepairing: false,
         photo: 'phone.jpg',
         title: 'Product With Damage 612',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 3',
         guarantee: JSON.stringify({
           start: '2019-08-15 08:30:00',
@@ -104,7 +104,7 @@ module.exports = {
         isRepairing: true,
         photo: 'laptop.jpg',
         title: 'Product 423',
-        type: 'Laptops',
+        type: 'laptops',
         specification: 'Specification 4',
         guarantee: JSON.stringify({
           start: '2020-03-20 14:45:00',
@@ -123,7 +123,7 @@ module.exports = {
         isRepairing: false,
         photo: 'tablet.jpg',
         title: 'Product 987',
-        type: 'Tablets',
+        type: 'tablets',
         specification: 'Specification 5',
         guarantee: JSON.stringify({
           start: '2021-04-12 09:15:00',
@@ -142,7 +142,7 @@ module.exports = {
         isRepairing: false,
         photo: 'phone.jpg',
         title: 'Product 123',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 6',
         guarantee: JSON.stringify({
           start: '2022-05-25 18:30:00',
@@ -161,7 +161,7 @@ module.exports = {
         isRepairing: true,
         photo: 'monitor.jpg',
         title: 'Product Too Old 789',
-        type: 'Monitors',
+        type: 'monitors',
         specification: 'Specification 7',
         guarantee: JSON.stringify({
           start: '2023-06-10 12:00:00',
@@ -180,7 +180,7 @@ module.exports = {
         isRepairing: false,
         photo: 'laptop.jpg',
         title: 'Product Very New 555',
-        type: 'Laptops',
+        type: 'laptops',
         specification: 'Specification 8',
         guarantee: JSON.stringify({
           start: '2024-07-20 15:30:00',
@@ -199,7 +199,7 @@ module.exports = {
         isRepairing: false,
         photo: 'tablet.jpg',
         title: 'Product New 333',
-        type: 'Tablets',
+        type: 'tablets',
         specification: 'Specification 9',
         guarantee: JSON.stringify({
           start: '2025-08-05 09:00:00',
@@ -218,7 +218,7 @@ module.exports = {
         isRepairing: true,
         photo: 'phone.jpg',
         title: 'Product Old 777',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 10',
         guarantee: JSON.stringify({
           start: '2026-09-15 20:00:00',
@@ -237,7 +237,7 @@ module.exports = {
         isRepairing: true,
         photo: 'phone.jpg',
         title: 'Product Old 98765',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 10',
         guarantee: JSON.stringify({
           start: '2026-09-15 20:00:00',
@@ -256,7 +256,7 @@ module.exports = {
         isRepairing: true,
         photo: 'phone.jpg',
         title: 'Product Old New 6522',
-        type: 'Phones',
+        type: 'phones',
         specification: 'Specification 10',
         guarantee: JSON.stringify({
           start: '2026-09-15 20:00:00',

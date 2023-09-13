@@ -4,7 +4,7 @@ import {
   sendInternalServerErrorResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from '../errors/APIErrors';
+import { DatabaseOperationError } from './errors/APIErrors';
 import { sendNotFoundResponse } from '../utils/sendErrorResponces';
 import { isValidId } from '../helpers/isValidId';
 
@@ -43,6 +43,23 @@ class ProductController {
     }
   }
 
+  async getProductsByType(req: Request, res: Response) {
+    try {
+      const type = req.query.type;
+      const products = await productService.getProductsByType(String(type));
+
+      if (!products.length) {
+        return sendNotFoundResponse(res, 'Products not found');
+      }
+
+      return res.status(200).json(products);
+    } catch (error) {
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
+    }
+  }
+
   async getProductsForOrder(req: Request, res: Response) {
     const orderId = parseInt(req.params.orderId, 10);
 
@@ -61,33 +78,6 @@ class ProductController {
       }
 
       return res.status(200).json(products);
-    } catch (error) {
-      if (error instanceof DatabaseOperationError) {
-        return sendInternalServerErrorResponse(res, error.message);
-      }
-    }
-  }
-
-  async getProductsCountForOrder(req: Request, res: Response) {
-    const orderId = parseInt(req.params.orderId, 10);
-
-    if (!isValidId(orderId)) {
-      return sendBadRequestResponse(res, 'Invalid order ID type');
-    }
-
-    try {
-      const productCount = await productService.getProductCountForOrder(
-        orderId,
-      );
-
-      if (productCount === 0) {
-        return sendNotFoundResponse(
-          res,
-          `Products for order ${orderId} not found`,
-        );
-      }
-
-      return res.status(200).json({ count: productCount });
     } catch (error) {
       if (error instanceof DatabaseOperationError) {
         return sendInternalServerErrorResponse(res, error.message);

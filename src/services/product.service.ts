@@ -1,7 +1,10 @@
 import { Product } from '../models/products.model';
 import fs from 'fs';
 import path from 'path';
-import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
+import {
+  DatabaseOperationError,
+  NotFoundError,
+} from '../controllers/errors/APIErrors';
 
 class ProductService {
   async getProductById(productId: number) {
@@ -28,6 +31,20 @@ class ProductService {
     }
   }
 
+  async getProductsByType(type: string) {
+    try {
+      const products = await Product.findAll({
+        where: {
+          type: type,
+        },
+      });
+
+      return products;
+    } catch (error) {
+      throw new DatabaseOperationError('Error fetching products by type');
+    }
+  }
+
   async getProductsForOrder(orderId: number) {
     try {
       const products = await Product.findAll({
@@ -38,20 +55,6 @@ class ProductService {
     } catch (error) {
       throw new DatabaseOperationError(
         `Error fetching products for product ${orderId}`,
-      );
-    }
-  }
-
-  async getProductCountForOrder(orderId: number) {
-    try {
-      const productCount = await Product.count({
-        where: { order_id: orderId },
-      });
-
-      return productCount;
-    } catch (error) {
-      throw new DatabaseOperationError(
-        `Error fetching product count for order ${orderId}`,
       );
     }
   }
