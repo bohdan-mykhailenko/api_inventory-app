@@ -2,6 +2,20 @@ import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 import { Order } from '../models/orders.model';
 
 class OrderService {
+  async getOrderById(orderId: number) {
+    try {
+      const order = await Order.findByPk(orderId);
+
+      if (!order) {
+        throw new NotFoundError(`Order with ID ${orderId} not found`);
+      }
+
+      return order;
+    } catch (error) {
+      throw new DatabaseOperationError('Error while fetching order');
+    }
+  }
+
   async getAllOrders() {
     try {
       const orders = await Order.findAll();
