@@ -67,6 +67,7 @@ class OrderService {
           id: order.id,
           title: order.title,
           description: order.description,
+          date: order.date,
           productCount: order.getDataValue('productCount'),
           sumOfPrice: [
             {
