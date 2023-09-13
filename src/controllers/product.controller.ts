@@ -68,6 +68,33 @@ class ProductController {
     }
   }
 
+  async getProductsCountForOrder(req: Request, res: Response) {
+    const orderId = parseInt(req.params.orderId, 10);
+
+    if (!isValidId(orderId)) {
+      return sendBadRequestResponse(res, 'Invalid order ID type');
+    }
+
+    try {
+      const productCount = await productService.getProductCountForOrder(
+        orderId,
+      );
+
+      if (productCount === 0) {
+        return sendNotFoundResponse(
+          res,
+          `Products for order ${orderId} not found`,
+        );
+      }
+
+      return res.status(200).json({ count: productCount });
+    } catch (error) {
+      if (error instanceof DatabaseOperationError) {
+        return sendInternalServerErrorResponse(res, error.message);
+      }
+    }
+  }
+
   async addProduct(req: Request, res: Response) {
     const productData = req.body;
     const productImage = req.file as Express.Multer.File;
