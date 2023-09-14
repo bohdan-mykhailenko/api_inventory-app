@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
 import {
   sendInternalServerErrorResponse,
-  sendNotFoundResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
 import { DatabaseOperationError } from './errors/APIErrors';
@@ -33,10 +32,6 @@ class OrderController {
   async getAllOrders(req: Request, res: Response) {
     try {
       const orders = await orderService.getAllOrders();
-
-      if (!orders.length) {
-        return sendNotFoundResponse(res, 'Orders not found');
-      }
 
       return res.status(200).json(orders);
     } catch (error) {

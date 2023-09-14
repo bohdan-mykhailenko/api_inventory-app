@@ -5,7 +5,6 @@ import {
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
 import { DatabaseOperationError } from './errors/APIErrors';
-import { sendNotFoundResponse } from '../utils/sendErrorResponces';
 import { isValidId } from '../helpers/isValidId';
 
 class ProductController {
@@ -31,10 +30,6 @@ class ProductController {
     try {
       const products = await productService.getAllProducts();
 
-      if (!products.length) {
-        return sendNotFoundResponse(res, 'Products not found');
-      }
-
       return res.status(200).json(products);
     } catch (error) {
       if (error instanceof DatabaseOperationError) {
@@ -45,12 +40,8 @@ class ProductController {
 
   async getProductsByType(req: Request, res: Response) {
     try {
-      const type = req.query.type;
-      const products = await productService.getProductsByType(String(type));
-
-      if (!products.length) {
-        return sendNotFoundResponse(res, 'Products not found');
-      }
+      const type = req.query.type ? String(req.query.type) : 'all';
+      const products = await productService.getProductsByType(type);
 
       return res.status(200).json(products);
     } catch (error) {
@@ -70,13 +61,6 @@ class ProductController {
     try {
       const products = await productService.getProductsForOrder(orderId);
 
-      if (!products.length) {
-        return sendNotFoundResponse(
-          res,
-          `Products for product ${orderId} not found`,
-        );
-      }
-
       return res.status(200).json(products);
     } catch (error) {
       if (error instanceof DatabaseOperationError) {
@@ -87,7 +71,8 @@ class ProductController {
 
   async addProduct(req: Request, res: Response) {
     const productData = req.body;
-    const productImage = req.file as Express.Multer.File;
+    console.log('reqfile', req.file);
+    const photo = req.file as Express.Multer.File;
 
     if (!req.file || !req.body) {
       return sendBadRequestResponse(
@@ -97,10 +82,7 @@ class ProductController {
     }
 
     try {
-      const product = await productService.addProduct(
-        productData,
-        productImage,
-      );
+      const product = await productService.addProduct(productData, photo);
 
       return res.status(201).json(product);
     } catch (error) {

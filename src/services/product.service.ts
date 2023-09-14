@@ -33,10 +33,10 @@ class ProductService {
 
   async getProductsByType(type: string) {
     try {
+      const whereClause = type !== 'all' ? { type: type } : {};
+
       const products = await Product.findAll({
-        where: {
-          type: type,
-        },
+        where: whereClause,
       });
 
       return products;
@@ -59,18 +59,16 @@ class ProductService {
     }
   }
 
-  async addProduct(
-    productData: Partial<Product>,
-    productImage: Express.Multer.File,
-  ) {
+  async addProduct(productData: Partial<Product>, photo: Express.Multer.File) {
     try {
       const product = await Product.create({
         ...productData,
-        photo: productImage.filename,
+        photo: photo.filename,
       });
 
       return product;
     } catch (error) {
+      console.log(error);
       throw new DatabaseOperationError('Error adding a new product with image');
     }
   }
@@ -100,8 +98,9 @@ class ProductService {
 
       await product.destroy();
     } catch (error) {
+      console.log(error);
       throw new DatabaseOperationError(
-        `Error deleting product with ID ${productId}`,
+        `Error while deleting product with ID ${productId}`,
       );
     }
   }
