@@ -4,7 +4,7 @@ import {
   sendInternalServerErrorResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from './errors/APIErrors';
+import { DatabaseOperationError } from '../errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class OrderController {
@@ -29,9 +29,11 @@ class OrderController {
     }
   }
 
-  async getAllOrders(req: Request, res: Response) {
+  async getFilteredOrders(req: Request, res: Response) {
+    const query = req.query.query ? String(req.query.query) : '';
+
     try {
-      const orders = await orderService.getAllOrders();
+      const orders = await orderService.getFilteredOrders(query);
 
       return res.status(200).json(orders);
     } catch (error) {

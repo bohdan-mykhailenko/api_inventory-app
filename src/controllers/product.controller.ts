@@ -4,7 +4,7 @@ import {
   sendInternalServerErrorResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from './errors/APIErrors';
+import { DatabaseOperationError } from '../errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class ProductController {
@@ -26,22 +26,12 @@ class ProductController {
     }
   }
 
-  async getAllProducts(req: Request, res: Response) {
-    try {
-      const products = await productService.getAllProducts();
+  async getFilteredProducts(req: Request, res: Response) {
+    const type = req.query.type ? String(req.query.type) : 'all';
+    const query = req.query.query ? String(req.query.query) : '';
 
-      return res.status(200).json(products);
-    } catch (error) {
-      if (error instanceof DatabaseOperationError) {
-        return sendInternalServerErrorResponse(res, error.message);
-      }
-    }
-  }
-
-  async getProductsByType(req: Request, res: Response) {
     try {
-      const type = req.query.type ? String(req.query.type) : 'all';
-      const products = await productService.getProductsByType(type);
+      const products = await productService.getFilteredProducts(type, query);
 
       return res.status(200).json(products);
     } catch (error) {

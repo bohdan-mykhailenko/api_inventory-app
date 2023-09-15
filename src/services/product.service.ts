@@ -1,10 +1,9 @@
 import { Product } from '../models/products.model';
 import fs from 'fs';
 import path from 'path';
-import {
-  DatabaseOperationError,
-  NotFoundError,
-} from '../controllers/errors/APIErrors';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
+import { Sequelize } from 'sequelize';
+import { WhereClause } from '../types/WhereClause';
 
 class ProductService {
   async getProductById(productId: number) {
@@ -21,22 +20,18 @@ class ProductService {
     }
   }
 
-  async getAllProducts() {
+  async getFilteredProducts(type: string, query?: string) {
     try {
-      const products = await Product.findAll();
+      const whereClause: WhereClause = type !== 'all' ? { type } : {};
 
-      return products;
-    } catch (error) {
-      throw new DatabaseOperationError('Error fetching all products');
-    }
-  }
-
-  async getProductsByType(type: string) {
-    try {
-      const whereClause = type !== 'all' ? { type: type } : {};
+      if (query) {
+        whereClause.title = Sequelize.literal(
+          `LOWER("title") LIKE LOWER('%${query}%')`,
+        );
+      }
 
       const products = await Product.findAll({
-        where: whereClause,
+        where: whereClause as Record<string, string>,
       });
 
       return products;
