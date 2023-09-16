@@ -91,7 +91,6 @@ class OrderService {
 
       return formattedOrderDetails;
     } catch (error) {
-      console.log(error);
       throw new DatabaseOperationError('Error fetching order details');
     }
   }
@@ -118,7 +117,6 @@ class OrderService {
 
       await order.destroy();
     } catch (error) {
-      console.log(error);
       throw new DatabaseOperationError(
         `Error while deleting order with ID ${orderId}`,
       );

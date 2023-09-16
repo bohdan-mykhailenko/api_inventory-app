@@ -4,6 +4,8 @@ import path from 'path';
 import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 import { Sequelize } from 'sequelize';
 import { WhereClause } from '../types/WhereClause';
+import { Order } from '../models/orders.model';
+import { ProductData } from '../types/ProductData';
 
 class ProductService {
   async getProductById(productId: number) {
@@ -32,9 +34,25 @@ class ProductService {
 
       const products = await Product.findAll({
         where: whereClause as Record<string, string>,
+        include: [{ model: Order, attributes: ['title'] }],
+        order: [['id', 'ASC']],
       });
 
-      return products;
+      const formattedProductsData = products.map((product) => ({
+        id: product.id,
+        serialNumber: product.serialNumber,
+        isNew: product.isNew,
+        isRepairing: product.isRepairing,
+        photo: product.photo,
+        title: product.title,
+        type: product.type,
+        specification: product.specification,
+        guarantee: product.guarantee,
+        price: product.price,
+        orderTitle: product.order?.title || '',
+      }));
+
+      return formattedProductsData;
     } catch (error) {
       throw new DatabaseOperationError('Error fetching products by type');
     }
@@ -54,16 +72,21 @@ class ProductService {
     }
   }
 
-  async addProduct(productData: Partial<Product>, photo: Express.Multer.File) {
+  async addProduct(
+    productData: Partial<ProductData>,
+    photo: Express.Multer.File,
+  ) {
     try {
-      const product = await Product.create({
+      const parsedProductData: Partial<Product> = {
         ...productData,
+        guarantee: JSON.parse(productData.guarantee as string),
+        price: JSON.parse(productData.price as string),
         photo: photo.filename,
-      });
+      };
 
+      const product = await Product.create(parsedProductData);
       return product;
     } catch (error) {
-      console.log(error);
       throw new DatabaseOperationError('Error adding a new product with image');
     }
   }
@@ -93,7 +116,6 @@ class ProductService {
 
       await product.destroy();
     } catch (error) {
-      console.log(error);
       throw new DatabaseOperationError(
         `Error while deleting product with ID ${productId}`,
       );

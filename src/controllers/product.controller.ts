@@ -61,7 +61,6 @@ class ProductController {
 
   async addProduct(req: Request, res: Response) {
     const productData = req.body;
-    console.log('reqfile', req.file);
     const photo = req.file as Express.Multer.File;
 
     if (!req.file || !req.body) {
