@@ -28,7 +28,7 @@ class ProductService {
 
       if (query) {
         whereClause.title = Sequelize.literal(
-          `LOWER("title") LIKE LOWER('%${query}%')`,
+          `LOWER("Product"."title") LIKE LOWER('%${query}%')`,
         );
       }
 
@@ -54,7 +54,8 @@ class ProductService {
 
       return formattedProductsData;
     } catch (error) {
-      throw new DatabaseOperationError('Error fetching products by type');
+      console.log(error);
+      throw new DatabaseOperationError('Error fetching products');
     }
   }
 
