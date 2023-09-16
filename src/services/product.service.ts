@@ -1,10 +1,11 @@
 import { Product } from '../models/products.model';
 import fs from 'fs';
 import path from 'path';
-import {
-  DatabaseOperationError,
-  NotFoundError,
-} from '../controllers/errors/APIErrors';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
+import { Sequelize } from 'sequelize';
+import { WhereClause } from '../types/WhereClause';
+import { Order } from '../models/orders.model';
+import { ProductData } from '../types/ProductData';
 
 class ProductService {
   async getProductById(productId: number) {
@@ -21,27 +22,40 @@ class ProductService {
     }
   }
 
-  async getAllProducts() {
+  async getFilteredProducts(type: string, query?: string) {
     try {
-      const products = await Product.findAll();
+      const whereClause: WhereClause = type !== 'all' ? { type } : {};
 
-      return products;
-    } catch (error) {
-      throw new DatabaseOperationError('Error fetching all products');
-    }
-  }
+      if (query) {
+        whereClause.title = Sequelize.literal(
+          `LOWER("Product"."title") LIKE LOWER('%${query}%')`,
+        );
+      }
 
-  async getProductsByType(type: string) {
-    try {
       const products = await Product.findAll({
-        where: {
-          type: type,
-        },
+        where: whereClause as Record<string, string>,
+        include: [{ model: Order, attributes: ['title'] }],
+        order: [['id', 'ASC']],
       });
 
-      return products;
+      const formattedProductsData = products.map((product) => ({
+        id: product.id,
+        serialNumber: product.serialNumber,
+        isNew: product.isNew,
+        isRepairing: product.isRepairing,
+        photo: product.photo,
+        title: product.title,
+        type: product.type,
+        specification: product.specification,
+        guarantee: product.guarantee,
+        price: product.price,
+        orderTitle: product.order?.title || '',
+      }));
+
+      return formattedProductsData;
     } catch (error) {
-      throw new DatabaseOperationError('Error fetching products by type');
+      console.log(error);
+      throw new DatabaseOperationError('Error fetching products');
     }
   }
 
@@ -60,15 +74,18 @@ class ProductService {
   }
 
   async addProduct(
-    productData: Partial<Product>,
-    productImage: Express.Multer.File,
+    productData: Partial<ProductData>,
+    photo: Express.Multer.File,
   ) {
     try {
-      const product = await Product.create({
+      const parsedProductData: Partial<Product> = {
         ...productData,
-        photo: productImage.filename,
-      });
+        guarantee: JSON.parse(productData.guarantee as string),
+        price: JSON.parse(productData.price as string),
+        photo: photo.filename,
+      };
 
+      const product = await Product.create(parsedProductData);
       return product;
     } catch (error) {
       throw new DatabaseOperationError('Error adding a new product with image');
@@ -101,7 +118,7 @@ class ProductService {
       await product.destroy();
     } catch (error) {
       throw new DatabaseOperationError(
-        `Error deleting product with ID ${productId}`,
+        `Error while deleting product with ID ${productId}`,
       );
     }
   }

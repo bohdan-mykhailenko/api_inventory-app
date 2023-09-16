@@ -84,6 +84,7 @@ export class Product extends Model {
     type: DataType.INTEGER,
     allowNull: false,
     field: 'order_id',
+    onDelete: 'CASCADE',
   })
   order_id!: number;
 

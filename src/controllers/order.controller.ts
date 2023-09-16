@@ -2,18 +2,14 @@ import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
 import {
   sendInternalServerErrorResponse,
-  sendNotFoundResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from './errors/APIErrors';
+import { DatabaseOperationError } from '../errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class OrderController {
   async getOrderById(req: Request, res: Response) {
     const orderId = parseInt(req.params.orderId, 10);
-    const queryParam = req.params.orderId;
-
-    console.log(queryParam);
 
     if (!isValidId(orderId)) {
       return sendBadRequestResponse(res, 'Invalid order ID type');
@@ -30,13 +26,11 @@ class OrderController {
     }
   }
 
-  async getAllOrders(req: Request, res: Response) {
-    try {
-      const orders = await orderService.getAllOrders();
+  async getFilteredOrders(req: Request, res: Response) {
+    const query = req.query.query ? String(req.query.query) : '';
 
-      if (!orders.length) {
-        return sendNotFoundResponse(res, 'Orders not found');
-      }
+    try {
+      const orders = await orderService.getFilteredOrders(query);
 
       return res.status(200).json(orders);
     } catch (error) {

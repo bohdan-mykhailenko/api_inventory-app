@@ -49,7 +49,7 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       },
       date: {
         type: Sequelize.STRING,

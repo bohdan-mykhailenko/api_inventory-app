@@ -4,8 +4,7 @@ import {
   sendInternalServerErrorResponse,
   sendBadRequestResponse,
 } from '../utils/sendErrorResponces';
-import { DatabaseOperationError } from './errors/APIErrors';
-import { sendNotFoundResponse } from '../utils/sendErrorResponces';
+import { DatabaseOperationError } from '../errors/APIErrors';
 import { isValidId } from '../helpers/isValidId';
 
 class ProductController {
@@ -27,30 +26,12 @@ class ProductController {
     }
   }
 
-  async getAllProducts(req: Request, res: Response) {
+  async getFilteredProducts(req: Request, res: Response) {
+    const type = req.query.type ? String(req.query.type) : 'all';
+    const query = req.query.query ? String(req.query.query) : '';
+
     try {
-      const products = await productService.getAllProducts();
-
-      if (!products.length) {
-        return sendNotFoundResponse(res, 'Products not found');
-      }
-
-      return res.status(200).json(products);
-    } catch (error) {
-      if (error instanceof DatabaseOperationError) {
-        return sendInternalServerErrorResponse(res, error.message);
-      }
-    }
-  }
-
-  async getProductsByType(req: Request, res: Response) {
-    try {
-      const type = req.query.type;
-      const products = await productService.getProductsByType(String(type));
-
-      if (!products.length) {
-        return sendNotFoundResponse(res, 'Products not found');
-      }
+      const products = await productService.getFilteredProducts(type, query);
 
       return res.status(200).json(products);
     } catch (error) {
@@ -70,13 +51,6 @@ class ProductController {
     try {
       const products = await productService.getProductsForOrder(orderId);
 
-      if (!products.length) {
-        return sendNotFoundResponse(
-          res,
-          `Products for product ${orderId} not found`,
-        );
-      }
-
       return res.status(200).json(products);
     } catch (error) {
       if (error instanceof DatabaseOperationError) {
@@ -87,7 +61,7 @@ class ProductController {
 
   async addProduct(req: Request, res: Response) {
     const productData = req.body;
-    const productImage = req.file as Express.Multer.File;
+    const photo = req.file as Express.Multer.File;
 
     if (!req.file || !req.body) {
       return sendBadRequestResponse(
@@ -97,10 +71,7 @@ class ProductController {
     }
 
     try {
-      const product = await productService.addProduct(
-        productData,
-        productImage,
-      );
+      const product = await productService.addProduct(productData, photo);
 
       return res.status(201).json(product);
     } catch (error) {

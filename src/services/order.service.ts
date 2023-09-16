@@ -1,11 +1,9 @@
 import { Sequelize } from 'sequelize';
-import {
-  DatabaseOperationError,
-  NotFoundError,
-} from '../controllers/errors/APIErrors';
+import { DatabaseOperationError, NotFoundError } from '../errors/APIErrors';
 import { Order } from '../models/orders.model';
 import { OrderDetails } from '../types/OrderDetails';
 import { Product } from '../models/products.model';
+import { WhereClause } from '../types/WhereClause';
 
 class OrderService {
   async getOrderById(orderId: number) {
@@ -22,8 +20,16 @@ class OrderService {
     }
   }
 
-  async getAllOrders() {
+  async getFilteredOrders(query: string) {
     try {
+      const whereClause: WhereClause = {};
+
+      if (query) {
+        whereClause.title = Sequelize.literal(
+          `LOWER("Order"."title") LIKE LOWER('%${query}%')`,
+        );
+      }
+
       const orderDetails = await Order.findAll({
         attributes: [
           'id',
@@ -58,6 +64,7 @@ class OrderService {
             required: false,
           },
         ],
+        where: whereClause as Record<string, string>,
         group: ['Order.id'],
         order: [['id', 'ASC']],
       });
@@ -84,7 +91,6 @@ class OrderService {
 
       return formattedOrderDetails;
     } catch (error) {
-      console.error(error);
       throw new DatabaseOperationError('Error fetching order details');
     }
   }
