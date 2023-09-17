@@ -1,15 +1,13 @@
 import { Sequelize } from 'sequelize-typescript';
-import { Order } from './models/orders.model';
-import { Product } from './models/products.model';
-import { db } from './db';
-
-// dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+import { Order } from '../models/orders.model';
+import { Product } from '../models/products.model';
+import { config } from './config';
 
 export const initDB = () => {
-  const DB_USERNAME = db.DB_USERNAME;
-  const DB_PASSWORD = db.DB_PASSWORD;
-  const DB_HOST = db.DB_HOST;
-  const DB_NAME = db.DB_NAME;
+  const DB_USERNAME = config.DB_USERNAME;
+  const DB_PASSWORD = config.DB_PASSWORD;
+  const DB_HOST = config.DB_HOST;
+  const DB_NAME = config.DB_NAME;
 
   const URI = `postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
 

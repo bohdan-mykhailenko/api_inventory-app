@@ -12,10 +12,6 @@ class ProductService {
     try {
       const product = await Product.findByPk(productId);
 
-      if (!product) {
-        throw new NotFoundError(`Product with ID ${productId} not found`);
-      }
-
       return product;
     } catch (error) {
       throw new DatabaseOperationError('Error while fetching product');
