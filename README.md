@@ -183,7 +183,7 @@ The base URL for the API is: **https://inventory-backend-production-324c.up.rail
         	DELETE
         </td>
         <td>
-        	/products/productId
+        	/products/:productId
         </td>
         <td>
         	Delete product with certain id.
@@ -248,7 +248,7 @@ The base URL for the API is: **https://inventory-backend-production-324c.up.rail
         	DELETE
         </td>
         <td>
-        	/orders/orderId
+        	/orders/:orderId
         </td>
         <td>
         	Delete order with certain id and all connected products.
