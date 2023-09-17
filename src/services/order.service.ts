@@ -10,10 +10,6 @@ class OrderService {
     try {
       const order = await Order.findByPk(orderId);
 
-      if (!order) {
-        throw new NotFoundError(`Order with ID ${orderId} not found`);
-      }
-
       return order;
     } catch (error) {
       throw new DatabaseOperationError('Error while fetching order');

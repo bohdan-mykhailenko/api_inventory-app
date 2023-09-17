@@ -3,7 +3,7 @@ import cors from 'cors';
 import createSocketServer from './socketServer';
 import { router as OrderRoutes } from './routes/orders.routes';
 import { router as ProductRoutes } from './routes/products.routes';
-import { initDB } from './initDB';
+import { initDB } from './database/initDB';
 
 const PORT = process.env.PORT || 5000;
 
