@@ -45,10 +45,10 @@ npm install
 ```
 
 3. Set up PostgreSQL Database:
- - Open the **db.ts** file and add your PostgreSQL database configuration.
+ - Open the **database/config.ts** file and add your PostgreSQL database configuration.
 
 ```
-export const db = {
+export const config = {
   DB_HOST: 'host',
   DB_NAME: 'name',
   DB_USERNAME: 'username',
