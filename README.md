@@ -28,7 +28,7 @@ This repository contains the source code for the Inventory-API project, which se
 - PostgreSQL
 - Multer
 
-## <a id="getting_started">Getting Started</a>
+## Getting Started
 
 To get started with the Online-Store-API, follow these steps:
 
@@ -95,7 +95,7 @@ The base URL for the API is: **https://inventory-backend-production-324c.up.rail
         </th>
     </tr>
     	<tr>
-    <th colspan="4">Products</th>
+        <th colspan="4">Products</th>
     	</tr>
     <tr>
         <td>
@@ -195,6 +195,20 @@ The base URL for the API is: **https://inventory-backend-production-324c.up.rail
     <tr>
         <th colspan="4">Orders</th>
     </tr>
+    <tr>
+        <td>
+        	GET
+        </td>
+        <td>
+        		/orders/:orderId
+        </td>
+        <td>
+        	Get orderwith certain id.
+        </td>
+        <td>
+        	NULL
+        </td>
+    </tr>
 <tr>
         <td>
         	GET
@@ -219,7 +233,8 @@ The base URL for the API is: **https://inventory-backend-production-324c.up.rail
         <td>
         	Create new order with all required fields.
         </td>
-        <td><pre>
+        <td>
+        	<pre>
 {
  title: string,
  date: string,
