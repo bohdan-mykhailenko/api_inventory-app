@@ -7,7 +7,10 @@ const createSocketServer = (expressApp: Express) => {
 
   const io = new Server(server, {
     cors: {
-      origin: '*',
+      origin: [
+        'https://bohdan-mykhailenko.github.io/inventory/',
+        'http://localhost:3000/inventory',
+      ],
     },
   });
 
