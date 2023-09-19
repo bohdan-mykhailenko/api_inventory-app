@@ -8,25 +8,26 @@ This repository contains the source code for the Inventory-API project, which se
 
 **The API provides the following features:**
 
-- **Get Data:** Get orders and products with certain criteria.
-- **Post Data:** Create a new order or product.
-- **Delete Data**: Delete any required order or product.
-- **Count Active Sessions:** Using the web-socket server the app count sessions.
+- **Get data:** Get orders and products with certain criteria.
+- **Post data:** Create a new order or product.
+- **Delete data**: Delete any required order or product.
+- **Count active sessions:** Using the web-socket server the app count sessions.
 
 **Additional features:**
 
-- **Image Upload:** Store image files and use the static feature.
+- **Image upload:** Store image files and use the static feature.
 - **Filtering:** Filtering products and orders by query or type(for products).
 
 ## Technologies
 
-- TypeScript
-- Node.js
-- Express
-- Socket.io
-- Sequelize
-- PostgreSQL
-- Multer
+- [TypeScript](https://www.typescriptlang.org/)
+- [Node.js](https://nodejs.org/en)
+- [Express](https://expressjs.com/)
+- [Socket.io](https://socket.io/)
+- [Sequelize](https://sequelize.org/)
+- [Sequelize CLI](https://sequelize.org/docs/v7/cli/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Multer](https://github.com/expressjs/multer)
 
 ## Getting Started
 
