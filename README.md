@@ -1,5 +1,9 @@
 # Inventory API
 
+## Overview
+* [**Demo Link**](https://bohdan-mykhailenko.github.io/inventory/)
+* [**Frontend Repo**](https://github.com/bohdan-mykhailenko/inventory)
+
 ## Description
 
 This repository contains the source code for the Inventory-API project, which serves as the backend for the inventory application. The API is based on **_Node.js_**, **_Express.js_** and **_Socket.io_**, and it interacts with a **_PostgreSQL_** database using the **_Sequelize ORM_**.
