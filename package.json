@@ -9,7 +9,6 @@
     "format": "prettier . --write",
     "lint": "eslint . --ignore-path .gitignore --ignore-pattern build/",
     "fix-style": "npm run format && npm run lint -- --fix",
-    "prepare": "husky install",
     "build": "tsc",
     "pre-build": "npm install && npm run build",
     "start": "node build/server.js",
